@@ -1,0 +1,14 @@
+/target
+/.flatpak-builder
+/flatpak-build
+/flatpak-repo
+/release-assets
+/Consilium.flatpak
+/SHA256SUMS.local
+
+# Local provider credentials and per-machine overrides. Keep the public,
+# credential-free template tracked.
+.env
+.env.*
+!.env.example
+/desktop/src-tauri/gen

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Consilium</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <!-- Consilium mark: neon-red flying dragon silhouette -->
+      <g id="dragon-mark" fill="currentColor">
+        <path d="M 238,156 C 272,124 312,98 346,88 L 352,72 L 360,84 C 392,78 428,74 452,72 Q 412,94 368,118 Q 340,120 318,144 L 314,162 L 306,146 Q 290,148 272,158 L 238,198 Z"/>
+        <path d="M 212,152 C 182,124 152,108 126,104 L 120,90 L 112,102 C 88,100 58,102 34,106 Q 72,122 112,132 Q 136,134 156,154 L 160,170 L 166,156 Q 180,160 190,164 L 204,168 Z"/>
+        <path d="M 202,184 L 212,196 L 202,210 L 200,218 L 206,224 L 198,236 L 196,226 L 190,238 L 188,226 L 178,234 L 184,222 L 192,214 L 196,204 Z"/>
+        <path d="M 234,204 L 250,218 L 244,236 L 248,248 L 262,252 L 258,262 L 252,256 L 246,270 L 242,258 L 232,266 L 236,254 L 240,246 L 236,232 Z"/>
+        <path d="M 248,218 C 272,230 288,246 292,262 C 294,280 272,294 246,296 C 226,297 208,290 202,278 C 198,270 202,262 210,258 L 222,266 Q 214,272 216,278 Q 224,287 244,286 C 266,284 282,272 280,258 C 277,242 262,228 250,214 L 260,220 L 266,226 L 274,222 L 280,240 L 286,234 L 256,208 Z"/>
+        <path d="M 204,92 L 182,72 L 198,94 L 194,96 L 176,84 L 192,102 L 200,106 L 196,112 L 188,108 L 194,124 L 191,132 L 183,128 L 189,140 L 188,148 L 180,144 L 187,156 L 190,162 L 196,166 L 208,170 L 212,160 L 218,176 L 228,182 L 232,172 L 238,188 L 246,194 L 250,184 L 254,200 L 256,208 L 248,220 C 232,220 216,214 208,208 C 198,198 197,186 199,178 C 202,166 206,158 210,152 L 222,144 L 238,138 L 264,134 L 242,120 L 254,114 L 272,110 L 264,100 C 252,94 240,92 232,94 C 220,88 210,88 204,92 Z"/>
+      </g>
+    </defs>
+  </svg>
+  <div id="shell">
+    <aside id="sidebar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 480 360" aria-label="Consilium dragon"><use href="#dragon-mark"/></svg>
+        Consilium
+      </div>
+      <button id="new-chat" type="button">＋ New chat</button>
+      <div class="section-label">Recent</div>
+      <div id="sessions"></div>
+      <dl id="info">
+        <dt>Connection</dt><dd id="info-mode">—</dd>
+        <dt>Conversation</dt><dd id="info-conversation">Chat · no tools</dd>
+        <dt>Model</dt><dd id="info-model">—</dd>
+        <dt>Session</dt><dd id="info-session">—</dd>
+      </dl>
+      <div class="section-label">Connectors</div>
+      <div id="connectors"></div>
+      <div class="sidebar-footer">
+        <span>Type <kbd>/</kbd> in the composer for commands</span>
+        <button id="open-setup-about" type="button">Setup &amp; About</button>
+      </div>
+    </aside>
+
+    <main id="main">
+      <div id="storage-alert" role="alert" hidden>
+        <span id="storage-alert-text"></span>
+        <button id="restore-backup" type="button" hidden>Restore last-known-good backup</button>
+        <button id="dismiss-storage-alert" type="button" aria-label="Dismiss storage warning">✕</button>
+      </div>
+      <div id="transcript" role="log" aria-live="polite" aria-relevant="additions">
+        <div id="empty-state">
+          <svg class="logo big" viewBox="0 0 480 360" aria-label="Consilium dragon"><use href="#dragon-mark"/></svg>
+          <h1>Consilium</h1>
+          <p class="tagline">One harness. Every agent.</p>
+          <p>Ask anything, then press Enter.<br />
+             <span class="dim">Enter sends · Shift+Enter for a new line · / for commands</span></p>
+          <p class="model-note">Choose an installed CLI, a direct API, or a fully local OpenAI-compatible endpoint. Automatic profiles explain every route and only fall back before answer text begins.</p>
+        </div>
+      </div>
+
+      <div id="composer-wrap">
+        <div id="slash-menu" hidden></div>
+        <div id="chips" hidden></div>
+        <div id="composer">
+          <button id="attach" type="button" title="Attach files or images" aria-label="Attach files or images">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+            </svg>
+          </button>
+          <input type="file" id="file-input" multiple hidden />
+          <label class="visually-hidden" for="input">Message</label>
+          <textarea id="input" rows="1" placeholder="Ask anything…" aria-describedby="composer-help"></textarea>
+          <span id="composer-help" class="visually-hidden">Press Enter to send or Shift Enter for a new line.</span>
+          <button id="send" type="button" title="Send (Enter)" aria-label="Send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </button>
+          <button id="stop" type="button" title="Interrupt" aria-label="Interrupt current response" hidden>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <rect x="7" y="7" width="10" height="10" rx="1.5" />
+            </svg>
+          </button>
+        </div>
+        <div id="controls">
+          <label class="control">
+            <span>Provider</span>
+            <select id="provider-select"></select>
+          </label>
+          <label class="control">
+            <span>Routing</span>
+            <select id="routing-profile-select">
+              <option value="manual">Manual</option>
+            </select>
+          </label>
+          <label class="control">
+            <span>Model</span>
+            <select id="model-select"></select>
+          </label>
+          <label class="control">
+            <span>Thinking</span>
+            <select id="effort-select">
+              <option value="default">Default</option>
+            </select>
+          </label>
+          <label class="control toggle" title="Agent uses a connector's native tool-enabled runtime. Chat sends conversation text without enabling tools.">
+            <input type="checkbox" id="agent-toggle" />
+            <span>Agent</span>
+          </label>
+          <button id="open-model-catalog" type="button" class="text-button">Open-model catalog</button>
+          <button id="open-setup-about-main" type="button" class="text-button">Setup &amp; About</button>
+          <details id="route-details">
+            <summary>Why this route?</summary>
+            <p id="route-explanation"></p>
+            <ol id="route-candidates"></ol>
+          </details>
+          <div id="statusline" role="status" aria-live="polite"><span id="state-dot"></span><span id="state-text">ready</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="setup-screen" hidden>
+    <svg class="logo big" viewBox="0 0 480 360" aria-label="Consilium dragon"><use href="#dragon-mark"/></svg>
+    <h1>Setup needed</h1>
+    <p id="setup-error"></p>
+    <button id="dismiss-setup" type="button">Open setup guide</button>
+  </div>
+
+  <dialog id="model-catalog-dialog" aria-labelledby="model-catalog-title">
+    <div class="dialog-heading">
+      <div>
+        <h2 id="model-catalog-title">Open-weight model catalog</h2>
+        <p>Suggestions for your configured compatible server—not claims that a model is installed.</p>
+      </div>
+      <button id="close-model-catalog" type="button" aria-label="Close model catalog">✕</button>
+    </div>
+    <div id="model-catalog-list"></div>
+  </dialog>
+
+  <dialog id="setup-about-dialog" aria-labelledby="setup-about-title">
+    <div class="dialog-heading">
+      <div>
+        <h2 id="setup-about-title">Set up Consilium</h2>
+        <p>Use a local endpoint, an installed provider CLI, or a direct API. Consilium itself has no paid tier or required account.</p>
+      </div>
+      <button id="close-setup-about" type="button" aria-label="Close setup and about">✕</button>
+    </div>
+    <div class="setup-guide">
+      <section>
+        <h3>1 · Fully local</h3>
+        <p>Start an OpenAI-compatible server, then create the plain-text configuration file at the path shown below. For example:</p>
+        <pre class="config-example"><code>OPENAI_COMPAT_BASE_URL=http://127.0.0.1:11434/v1
+OPENAI_COMPAT_MODEL=qwen3:8b</code></pre>
+        <p>Replace the model with the exact ID exposed by your server. Create the configuration directory first if it does not exist.</p>
+      </section>
+      <section>
+        <h3>2 · Provider CLI</h3>
+        <p>Install Grok, Claude Code, Codex, or Gemini/Antigravity. Use the connector's visible <strong>Sign in</strong> action to launch the provider-owned flow, then restart Consilium so availability is refreshed.</p>
+      </section>
+      <section>
+        <h3>3 · Direct API</h3>
+        <p>Add the provider key and required model ID to the ignored per-user <code>.env</code>. Direct-provider charges and terms belong to that provider; they never unlock a Consilium feature.</p>
+      </section>
+    </div>
+    <section class="setup-signins">
+      <h3>Installed CLI sign-in</h3>
+      <p>Launch an installed provider's own account flow here. Complete it in the terminal/browser it opens, then restart Consilium.</p>
+      <div id="setup-signin-actions"></div>
+    </section>
+    <dl class="about-facts">
+      <dt>Version</dt><dd id="about-version">—</dd>
+      <dt>Publisher</dt><dd>Flintglade</dd>
+      <dt>License</dt><dd>Apache-2.0</dd>
+      <dt>Configuration</dt><dd><code id="about-config-path">—</code></dd>
+      <dt>Session history</dt><dd><code id="about-session-path">—</code></dd>
+      <dt>Source</dt><dd><a id="about-repository" href="https://github.com/flintglade/consilium" target="_blank" rel="noreferrer">github.com/flintglade/consilium</a></dd>
+    </dl>
+    <p class="about-note">Model weights, provider apps, accounts, and API usage remain optional and are governed by their respective providers.</p>
+  </dialog>
+
+  <script src="markdown.js"></script>
+  <script src="preamble.js"></script>
+  <script src="request-state.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

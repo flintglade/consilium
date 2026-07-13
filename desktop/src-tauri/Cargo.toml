@@ -1,0 +1,24 @@
+[package]
+name = "grok-chat-desktop"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+authors = ["Flintglade <support@flintglade.com>"]
+homepage = "https://flintglade.com/"
+repository = "https://github.com/flintglade/consilium"
+description = "Flintglade Consilium desktop AI harness"
+
+[[bin]]
+name = "grok-chat-desktop"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["image-png"] }
+grok-chat-core = { path = "../../core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }

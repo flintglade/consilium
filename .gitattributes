@@ -1,0 +1,15 @@
+# Release payloads and generator inputs must retain their reviewed bytes on
+# every build host. THIRD_PARTY_NOTICES.txt intentionally contains upstream
+# materials with their original line endings.
+THIRD_PARTY_NOTICES.txt -text
+THIRD_PARTY_NOTICES.txt -whitespace
+packaging/license-fallbacks/* -text
+packaging/attribution-supplements/* -text
+
+# Keep the project license identical in Linux packages and the Windows
+# portable archive while retaining normal text treatment in Git.
+LICENSE text eol=lf
+
+# Shell entry points must remain executable by Linux runners after a Windows
+# checkout or contribution.
+*.sh text eol=lf

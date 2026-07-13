@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "entries": [
+    {
+      "package": "atk-sys",
+      "version": "0.18.2",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk3-rs/00133512bfc8bbb8e9be59b20e93406c6a3eeb21/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "cairo-sys-rs",
+      "version": "0.18.2",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk-rs-core/1ce51ac2eb3e11c34088a7249a17e767e63ee0d9/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "cargo_metadata",
+      "version": "0.19.2",
+      "license": "MIT",
+      "materials": [{
+        "type": "locked-package",
+        "package": "cargo_metadata",
+        "version": "0.19.2",
+        "path": "Cargo.toml",
+        "sha256": "69b8d90a5855062a89a81138122eca95bb0ba67280a3eccf17e5972f89921727",
+        "source": "Cargo.lock package cargo_metadata 0.19.2 exact published authorship metadata"
+      }]
+    },
+    {
+      "package": "gdk-pixbuf-sys",
+      "version": "0.18.0",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk-rs-core/be5974f3cc84d4bd89e16836edb973896581fcdf/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "gdk-sys",
+      "version": "0.18.2",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk3-rs/00133512bfc8bbb8e9be59b20e93406c6a3eeb21/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "gdkwayland-sys",
+      "version": "0.18.2",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk3-rs/00133512bfc8bbb8e9be59b20e93406c6a3eeb21/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "gdkx11-sys",
+      "version": "0.18.2",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk3-rs/00133512bfc8bbb8e9be59b20e93406c6a3eeb21/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "gio-sys",
+      "version": "0.18.1",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk-rs-core/854c9b0592fb3a3865caa3e8538a5dda98399c0c/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "glib-sys",
+      "version": "0.18.1",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk-rs-core/854c9b0592fb3a3865caa3e8538a5dda98399c0c/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "gobject-sys",
+      "version": "0.18.0",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk-rs-core/601a4c6779f14157248985616990f75be622ec69/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "gtk-sys",
+      "version": "0.18.2",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk3-rs/00133512bfc8bbb8e9be59b20e93406c6a3eeb21/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "ident_case",
+      "version": "1.0.1",
+      "license": "MIT/Apache-2.0",
+      "materials": [{
+        "type": "locked-package",
+        "package": "ident_case",
+        "version": "1.0.1",
+        "path": "src/lib.rs",
+        "sha256": "514f0c716fba1e8fbeefc118848655ceafa22fd24787ca28c0e7c2143d5c7175",
+        "source": "Cargo.lock package ident_case 1.0.1 exact source copyright and license notice"
+      }]
+    },
+    {
+      "package": "pango-sys",
+      "version": "0.18.0",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/gtk-rs-COPYRIGHT",
+        "sha256": "dae402989de65164815b7e2b6bc2b9576285434c3785934c8b6ece0fa055960d",
+        "source": "https://raw.githubusercontent.com/gtk-rs/gtk-rs-core/be5974f3cc84d4bd89e16836edb973896581fcdf/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "winnow",
+      "version": "0.5.40",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/winnow-COPYRIGHT",
+        "sha256": "472ecdadaee65c564f323a4fcb3f1ef21a23bd51dddb6d8d336f32122a680cd1",
+        "source": "https://raw.githubusercontent.com/winnow-rs/winnow/7613e84fe15f9f460f5c759e81d21fac31d0cde0/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "winnow",
+      "version": "0.7.15",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/winnow-COPYRIGHT",
+        "sha256": "472ecdadaee65c564f323a4fcb3f1ef21a23bd51dddb6d8d336f32122a680cd1",
+        "source": "https://raw.githubusercontent.com/winnow-rs/winnow/eae4d4a23c400fec27a01cfb7115bc7808374f40/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "winnow",
+      "version": "1.0.3",
+      "license": "MIT",
+      "materials": [{
+        "type": "vendored",
+        "path": "packaging/attribution-supplements/winnow-COPYRIGHT",
+        "sha256": "472ecdadaee65c564f323a4fcb3f1ef21a23bd51dddb6d8d336f32122a680cd1",
+        "source": "https://raw.githubusercontent.com/winnow-rs/winnow/aabae22f0426695f72a89fed1de6174e221100b3/COPYRIGHT"
+      }]
+    },
+    {
+      "package": "x11-dl",
+      "version": "2.21.0",
+      "license": "MIT",
+      "materials": [{
+        "type": "locked-package",
+        "package": "x11-dl",
+        "version": "2.21.0",
+        "path": "Cargo.toml",
+        "sha256": "050489fe79382bf918203cc32e7c5684e8298989ce7420ffa4221c59bd93176c",
+        "source": "Cargo.lock package x11-dl 2.21.0 exact published authorship metadata"
+      }]
+    },
+    {
+      "package": "x11",
+      "version": "2.21.0",
+      "license": "MIT",
+      "materials": [{
+        "type": "locked-package",
+        "package": "x11",
+        "version": "2.21.0",
+        "path": "Cargo.toml",
+        "sha256": "5cda06af607265aa8a7a9d99d9e40c1bb0674da0d1cc9c4c494d9068adb46186",
+        "source": "Cargo.lock package x11 2.21.0 exact published authorship metadata"
+      }]
+    },
+    {
+      "package": "zmij",
+      "version": "1.0.21",
+      "license": "MIT",
+      "materials": [{
+        "type": "locked-package",
+        "package": "zmij",
+        "version": "1.0.21",
+        "path": "Cargo.toml",
+        "sha256": "08f0f39b8b92d1a11c99d7dcf149455d8430f850cdd67d9b19091b919ca59c85",
+        "source": "Cargo.lock package zmij 1.0.21 exact published authorship metadata"
+      }]
+    }
+  ]
+}

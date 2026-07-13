@@ -1,0 +1,44 @@
+# Local build manifest. Do not submit this file to Flathub unchanged: Flathub
+# requires an immutable public source archive, and its current generative-AI
+# policy requires an explicit eligibility exception for this project.
+app-id: com.flintglade.consilium
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+command: grok-chat-desktop
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+modules:
+  - name: consilium
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin
+      env:
+        CARGO_HOME: /run/build/consilium/cargo
+        CARGO_NET_OFFLINE: 'true'
+    build-commands:
+      - cargo --offline fetch --locked --manifest-path Cargo.toml
+      - cargo build --offline --release --locked -p grok-chat-desktop
+      - install -Dm0755 target/release/grok-chat-desktop /app/bin/grok-chat-desktop
+      - install -Dm0644 packaging/flatpak/com.flintglade.consilium.desktop /app/share/applications/com.flintglade.consilium.desktop
+      - install -Dm0644 packaging/flatpak/com.flintglade.consilium.metainfo.xml /app/share/metainfo/com.flintglade.consilium.metainfo.xml
+      - install -Dm0644 desktop/src-tauri/icons/icon.png /app/share/icons/hicolor/256x256/apps/com.flintglade.consilium.png
+      - install -Dm0644 LICENSE /app/share/licenses/com.flintglade.consilium/LICENSE
+      - install -Dm0644 THIRD_PARTY_NOTICES.txt /app/share/licenses/com.flintglade.consilium/THIRD_PARTY_NOTICES.txt
+    sources:
+      - type: dir
+        path: ../..
+        skip:
+          - .env
+          - .env.*
+          - .git
+          - target
+          - .flatpak-builder
+          - flatpak-build
+          - flatpak-repo
+      - cargo-sources.json

@@ -1,0 +1,168 @@
+name: Release desktop bundles
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: dtolnay/rust-toolchain@a75363d06101555fc97c6c7e1e65670b99104d98 # 1.96.1
+      - name: Install metadata validators
+        run: sudo apt-get update && sudo apt-get install -y appstream desktop-file-utils jq
+      - name: Validate version and packaging metadata
+        run: packaging/check-distribution.sh --release "${GITHUB_REF_NAME}"
+
+  bundle:
+    needs: validate
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-22.04
+            bundles: appimage,deb,rpm
+          - platform: windows-latest
+            bundles: nsis,msi
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: dtolnay/rust-toolchain@a75363d06101555fc97c6c7e1e65670b99104d98 # 1.96.1
+      - uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
+      - name: Install Linux bundle dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            rpm \
+            xdg-utils
+      - name: Install pinned Tauri CLI
+        run: cargo install tauri-cli --version 2.11.4 --locked
+      - name: Build and attach platform bundles to a draft release
+        uses: tauri-apps/tauri-action@944946e3e4cac6603d1fe8f514171e9ecd3c78aa # v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: desktop
+          tauriScript: cargo tauri
+          args: --bundles ${{ matrix.bundles }}
+          tagName: ${{ github.ref_name }}
+          releaseName: Consilium ${{ github.ref_name }}
+          releaseBody: |
+            Flintglade Consilium desktop bundles for Windows and Linux.
+
+            Consilium is free and open source under Apache-2.0. Optional support: https://www.patreon.com/c/zach457
+
+            This release remains a draft until the owner verifies both clean-machine installs and records the Windows signing status. No updater feed is published.
+          releaseDraft: true
+          prerelease: false
+          uploadUpdaterJson: false
+          uploadUpdaterSignatures: false
+      - name: Package and upload Windows portable ZIP
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $candidates = @(
+            "target/release/grok-chat-desktop.exe",
+            "desktop/src-tauri/target/release/grok-chat-desktop.exe"
+          )
+          $executable = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $executable) {
+            throw "Tauri build completed without the workspace desktop executable"
+          }
+
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          $portableRoot = Join-Path $env:RUNNER_TEMP "Consilium-portable"
+          $archive = Join-Path $env:RUNNER_TEMP "Consilium_${version}_windows_x86_64_portable.zip"
+          Remove-Item -Recurse -Force $portableRoot -ErrorAction SilentlyContinue
+          Remove-Item -Force $archive -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Path $portableRoot | Out-Null
+          Copy-Item $executable (Join-Path $portableRoot "Consilium.exe")
+          Copy-Item "LICENSE" (Join-Path $portableRoot "LICENSE.txt")
+          Copy-Item "THIRD_PARTY_NOTICES.txt" (Join-Path $portableRoot "THIRD_PARTY_NOTICES.txt")
+          @"
+          Consilium portable for Windows
+
+          This is Flintglade's free and open-source Consilium desktop executable,
+          provided under Apache-2.0. LICENSE.txt contains the complete project license,
+          and THIRD_PARTY_NOTICES.txt records the locked Rust dependency inventory plus
+          its release-target license and attribution texts. This package does not
+          install shortcuts or uninstallation metadata and does not
+          include a WebView2 bootstrapper. Install Microsoft's current WebView2 Runtime
+          first if Windows does not already provide it.
+
+          The executable is portable; session and provider state are not stored beside
+          it. Sessions default to
+          %LOCALAPPDATA%\Flintglade\Consilium\sessions.json. GROK_CHAT_DATA_DIR can
+          override that location. Never put API keys in this ZIP.
+
+          Project home: https://flintglade.com/
+          Optional support: https://www.patreon.com/c/zach457
+          "@ | Set-Content -Encoding utf8 (Join-Path $portableRoot "README.txt")
+          Compress-Archive -Path (Join-Path $portableRoot "*") -DestinationPath $archive
+          gh release upload "$env:GITHUB_REF_NAME" $archive `
+            --repo "$env:GITHUB_REPOSITORY" --clobber
+
+  checksums:
+    needs: bundle
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Install package inspection tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            binutils \
+            cpio \
+            file \
+            jq \
+            msitools \
+            p7zip-full \
+            rpm \
+            unzip
+      - name: Download all draft release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --dir release-assets
+          rm -f release-assets/SHA256SUMS SHA256SUMS
+      - name: Verify release artifact set and package metadata
+        run: packaging/verify-release-assets.sh release-assets
+      - name: Generate and upload SHA-256 checksums
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          rm -f release-assets/SHA256SUMS SHA256SUMS
+          find release-assets -maxdepth 1 -type f ! -name SHA256SUMS -printf '%f\0' \
+            | sort -z \
+            | while IFS= read -r -d '' file; do
+                (cd release-assets && sha256sum "$file")
+              done > SHA256SUMS
+          test -s SHA256SUMS
+          gh release upload "${GITHUB_REF_NAME}" SHA256SUMS \
+            --repo "${GITHUB_REPOSITORY}" --clobber

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Consilium
+Comment=Route AI conversations across local and optional providers
+Exec=grok-chat-desktop
+Icon=com.flintglade.consilium
+Terminal=false
+Categories=Network;
+Keywords=AI;Chat;Local Models;LLM;
+StartupNotify=true
+StartupWMClass=grok-chat-desktop

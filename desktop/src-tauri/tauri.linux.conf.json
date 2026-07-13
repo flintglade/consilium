@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "active": true,
+    "targets": ["appimage", "deb", "rpm"],
+    "category": "Productivity",
+    "publisher": "Flintglade <support@flintglade.com>",
+    "homepage": "https://flintglade.com/",
+    "shortDescription": "A multi-provider AI harness for local and optional cloud models",
+    "longDescription": "Consilium is Flintglade's free and open-source desktop harness for conversations with local OpenAI-compatible models, provider CLIs, and optional direct APIs.",
+    "license": "Apache-2.0",
+    "licenseFile": "../../LICENSE",
+    "icon": ["icons/icon.png"],
+    "linux": {
+      "appimage": {
+        "files": {
+          "/usr/share/licenses/consilium/LICENSE": "../../LICENSE",
+          "/usr/share/licenses/consilium/THIRD_PARTY_NOTICES.txt": "../../THIRD_PARTY_NOTICES.txt"
+        }
+      },
+      "deb": {
+        "files": {
+          "/usr/share/doc/consilium/copyright": "../../LICENSE",
+          "/usr/share/doc/consilium/THIRD_PARTY_NOTICES.txt": "../../THIRD_PARTY_NOTICES.txt"
+        }
+      },
+      "rpm": {
+        "files": {
+          "/usr/share/licenses/consilium/LICENSE": "../../LICENSE",
+          "/usr/share/licenses/consilium/THIRD_PARTY_NOTICES.txt": "../../THIRD_PARTY_NOTICES.txt"
+        }
+      }
+    }
+  }
+}
