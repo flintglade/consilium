@@ -1668,6 +1668,11 @@ fn routing_profile_starts_in_agent_mode(profile: &str) -> bool {
     profile == "agent-tools"
 }
 
+fn no_usable_route_message() -> String {
+    "No configured Chat route is available. Open Setup to configure a local OpenAI-compatible endpoint, sign in to an installed provider CLI, or add an optional direct API."
+        .to_string()
+}
+
 fn initial_route() -> (String, String, HashMap<String, Backend>, Option<String>) {
     // Loading any route also performs the project's safe dotenv discovery. Do
     // this before inspecting provider availability so API-only installations
@@ -1698,6 +1703,7 @@ fn initial_route() -> (String, String, HashMap<String, Backend>, Option<String>)
         profile = "manual".to_string();
         provider = choose_manual_startup_provider(&startup_routes, requested_provider.as_deref());
     }
+    let no_usable_route = provider.is_none();
     let provider = provider.unwrap_or_else(|| {
         profile = "manual".to_string();
         "grok".to_string()
@@ -1709,12 +1715,16 @@ fn initial_route() -> (String, String, HashMap<String, Backend>, Option<String>)
         load_backend(&provider)
     };
     let mut backends = HashMap::new();
-    let config_error = match loaded {
-        Ok(backend) => {
-            backends.insert(provider.clone(), backend);
-            None
+    let config_error = if no_usable_route {
+        Some(no_usable_route_message())
+    } else {
+        match loaded {
+            Ok(backend) => {
+                backends.insert(provider.clone(), backend);
+                None
+            }
+            Err(error) => Some(error.to_string()),
         }
-        Err(error) => Some(error.to_string()),
     };
     (provider, profile, backends, config_error)
 }
@@ -1967,6 +1977,15 @@ mod tests {
         assert!(routing_profile_starts_in_agent_mode("agent-tools"));
         assert!(!routing_profile_starts_in_agent_mode("balanced"));
         assert!(!routing_profile_starts_in_agent_mode("manual"));
+    }
+
+    #[test]
+    fn empty_startup_message_leads_with_every_supported_setup_path() {
+        let message = no_usable_route_message();
+        assert!(message.contains("local OpenAI-compatible endpoint"));
+        assert!(message.contains("provider CLI"));
+        assert!(message.contains("direct API"));
+        assert!(!message.contains("required"));
     }
 
     #[test]
