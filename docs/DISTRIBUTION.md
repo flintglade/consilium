@@ -112,7 +112,9 @@ not replace clean-machine tests of the supported installers.
 Linux AppImages should be built on the oldest supported base with WebKitGTK
 4.1; the workflow uses Ubuntu 22.04 for that compatibility boundary. The
 AppImage, deb, and RPM are direct-download formats, not a claim of app-store
-publication.
+publication. The AppImage embeds validated AppStream metadata under
+`usr/share/metainfo` so catalogs can read the project description, release,
+homepage, source, and optional-support links directly from the artifact.
 
 ## AppImageHub
 

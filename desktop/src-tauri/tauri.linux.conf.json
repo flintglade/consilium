@@ -15,7 +15,8 @@
       "appimage": {
         "files": {
           "/usr/share/licenses/consilium/LICENSE": "../../LICENSE",
-          "/usr/share/licenses/consilium/THIRD_PARTY_NOTICES.txt": "../../THIRD_PARTY_NOTICES.txt"
+          "/usr/share/licenses/consilium/THIRD_PARTY_NOTICES.txt": "../../THIRD_PARTY_NOTICES.txt",
+          "/usr/share/metainfo/com.flintglade.consilium.metainfo.xml": "../../packaging/appimage/com.flintglade.consilium.metainfo.xml"
         }
       },
       "deb": {

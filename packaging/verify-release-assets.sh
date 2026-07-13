@@ -34,6 +34,7 @@ single_asset() {
 }
 
 require_command 7z
+require_command appstreamcli
 require_command cpio
 require_command dpkg-deb
 require_command file
@@ -153,6 +154,10 @@ compare_license \
 compare_notices \
   "$work_dir/appimage/squashfs-root/usr/share/licenses/consilium/THIRD_PARTY_NOTICES.txt" \
   'AppImage'
+appimage_meta="$work_dir/appimage/squashfs-root/usr/share/metainfo/com.flintglade.consilium.metainfo.xml"
+[[ -s "$appimage_meta" ]] || fail 'AppImage does not contain AppStream metadata'
+appstreamcli validate --no-net "$appimage_meta" >/dev/null ||
+  fail 'AppImage AppStream metadata is invalid'
 
 printf '%s\n' \
   'Consilium.exe' \

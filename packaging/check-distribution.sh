@@ -11,6 +11,7 @@ repository="https://github.com/flintglade/consilium"
 patreon="https://www.patreon.com/c/zach457"
 linux_publisher="Flintglade <support@flintglade.com>"
 meta="packaging/flatpak/${app_id}.metainfo.xml"
+appimage_meta="packaging/appimage/${app_id}.metainfo.xml"
 desktop="packaging/flatpak/${app_id}.desktop"
 flatpak_manifest="packaging/flatpak/${app_id}.local.yml"
 
@@ -39,6 +40,7 @@ jq -e --arg homepage "$homepage" --arg publisher "$linux_publisher" '
   .bundle.licenseFile == "../../LICENSE" and
   .bundle.linux.appimage.files["/usr/share/licenses/consilium/LICENSE"] == "../../LICENSE" and
   .bundle.linux.appimage.files["/usr/share/licenses/consilium/THIRD_PARTY_NOTICES.txt"] == "../../THIRD_PARTY_NOTICES.txt" and
+  .bundle.linux.appimage.files["/usr/share/metainfo/com.flintglade.consilium.metainfo.xml"] == "../../packaging/appimage/com.flintglade.consilium.metainfo.xml" and
   .bundle.linux.deb.files["/usr/share/doc/consilium/copyright"] == "../../LICENSE" and
   .bundle.linux.deb.files["/usr/share/doc/consilium/THIRD_PARTY_NOTICES.txt"] == "../../THIRD_PARTY_NOTICES.txt" and
   .bundle.linux.rpm.files["/usr/share/licenses/consilium/LICENSE"] == "../../LICENSE" and
@@ -82,6 +84,7 @@ desktop-file-validate "$desktop"
 
 command -v appstreamcli >/dev/null || fail "appstreamcli is required"
 appstreamcli validate --no-net "$meta"
+appstreamcli validate --no-net "$appimage_meta"
 
 [[ -s desktop/src-tauri/icons/icon.png ]] || fail "Linux icon is missing"
 [[ -s desktop/src-tauri/icons/icon.ico ]] || fail "Windows icon is missing"
