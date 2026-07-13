@@ -15,6 +15,10 @@ permissions:
 jobs:
   clean-install:
     name: ${{ matrix.kind }} clean install
+    # GitHub's draft-release download path requires write-scoped contents access
+    # even though this workflow only reads the existing release assets.
+    permissions:
+      contents: write
     runs-on: windows-2022
     timeout-minutes: 20
     strategy:
