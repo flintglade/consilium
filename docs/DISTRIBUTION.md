@@ -126,6 +126,11 @@ owner can add a one-line data file linking to
 `https://github.com/flintglade/consilium` and open a pull request to the
 AppImageHub catalog repository.
 
+The published release asset is named
+`consilium-<version>-x86_64.AppImage`, following AppImage's portable filename
+convention even though Tauri's intermediate bundle uses Debian's `amd64`
+architecture label.
+
 The catalog runs its own automated checks and may apply additional human
 review. A passing Consilium release makes submission possible, but it does not
 guarantee listing. The release owner should submit only after checking the

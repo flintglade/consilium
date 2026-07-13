@@ -64,6 +64,10 @@ linux_publisher="Flintglade <support@flintglade.com>"
 work_dir="$(mktemp -d)"
 trap 'rm -rf "$work_dir"' EXIT
 
+expected_appimage="consilium-${version}-x86_64.AppImage"
+[[ "$(basename "$appimage")" == "$expected_appimage" ]] ||
+  fail "AppImage filename is $(basename "$appimage"), expected $expected_appimage"
+
 compare_license() {
   local bundled_license="$1"
   local label="$2"
@@ -158,6 +162,15 @@ appimage_meta="$work_dir/appimage/squashfs-root/usr/share/metainfo/com.flintglad
 [[ -s "$appimage_meta" ]] || fail 'AppImage does not contain AppStream metadata'
 appstreamcli validate --no-net "$appimage_meta" >/dev/null ||
   fail 'AppImage AppStream metadata is invalid'
+appimage_wrapped="$work_dir/appimage/squashfs-root/AppRun.wrapped"
+[[ -f "$appimage_wrapped" ]] || fail 'AppImage does not contain AppRun.wrapped'
+wrapped_mode="$(stat --format='%a' "$appimage_wrapped")"
+case "${wrapped_mode: -1}" in
+  1 | 3 | 5 | 7) ;;
+  *)
+    fail "AppImage AppRun.wrapped mode is $wrapped_mode; every user needs execute permission"
+    ;;
+esac
 
 printf '%s\n' \
   'Consilium.exe' \

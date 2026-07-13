@@ -98,6 +98,10 @@ appstreamcli validate --no-net "$appimage_meta"
   fail "third-party notice generator is not executable"
 [[ -x packaging/verify-release-assets.sh ]] ||
   fail "release artifact verifier is not executable"
+[[ -x packaging/prepare-tauri-apprun.sh ]] ||
+  fail "Tauri AppRun preparation helper is not executable"
+[[ -x packaging/verify-appimage-launch.sh ]] ||
+  fail "AppImage offline launch verifier is not executable"
 grep -Fxq 'THIRD_PARTY_NOTICES.txt -text' .gitattributes ||
   fail "third-party notice bytes are not protected from checkout conversion"
 grep -Fxq 'packaging/license-fallbacks/* -text' .gitattributes ||
@@ -147,6 +151,12 @@ grep -Fq "Copy-Item \"THIRD_PARTY_NOTICES.txt\" (Join-Path \$portableRoot \"THIR
   .github/workflows/release-desktop.yml || fail "portable workflow does not include third-party notices"
 grep -Fq 'packaging/verify-release-assets.sh release-assets' \
   .github/workflows/release-desktop.yml || fail "release artifacts are not inspected before checksums"
+grep -Fq 'run: packaging/prepare-tauri-apprun.sh' \
+  .github/workflows/release-desktop.yml || fail "release workflow does not normalize AppImage launch permissions"
+grep -Fq "expected=\"release-assets/consilium-\${version}-x86_64.AppImage\"" \
+  .github/workflows/release-desktop.yml || fail "release workflow does not normalize the AppImage filename"
+grep -Fq 'run: packaging/verify-appimage-launch.sh release-assets/*.AppImage' \
+  .github/workflows/release-desktop.yml || fail "release workflow does not run the offline AppImage launch gate"
 grep -Fq 'rm -f release-assets/SHA256SUMS SHA256SUMS' \
   .github/workflows/release-desktop.yml || fail "release reruns do not remove old checksums"
 grep -Fq "! -name SHA256SUMS" .github/workflows/release-desktop.yml ||

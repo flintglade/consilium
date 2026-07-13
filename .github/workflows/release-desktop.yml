@@ -55,6 +55,9 @@ jobs:
             xdg-utils
       - name: Install pinned Tauri CLI
         run: cargo install tauri-cli --version 2.11.4 --locked
+      - name: Prepare portable AppImage launcher
+        if: runner.os == 'Linux'
+        run: packaging/prepare-tauri-apprun.sh
       - name: Build and attach platform bundles to a draft release
         uses: tauri-apps/tauri-action@944946e3e4cac6603d1fe8f514171e9ecd3c78aa # v1
         env:
@@ -139,11 +142,14 @@ jobs:
             binutils \
             cpio \
             file \
+            firejail \
             jq \
             msitools \
             p7zip-full \
             rpm \
-            unzip
+            unzip \
+            xdotool \
+            xvfb
       - name: Download all draft release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -152,8 +158,33 @@ jobs:
             --repo "${GITHUB_REPOSITORY}" \
             --dir release-assets
           rm -f release-assets/SHA256SUMS SHA256SUMS
+      - name: Normalize the AppImage release filename
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          expected="release-assets/consilium-${version}-x86_64.AppImage"
+          mapfile -d '' candidates < <(
+            find release-assets -maxdepth 1 -type f -name '*.AppImage' \
+              ! -name "$(basename "$expected")" -print0
+          )
+          if ((${#candidates[@]} == 1)); then
+            original="${candidates[0]}"
+            original_name="$(basename "$original")"
+            rm -f "$expected"
+            mv "$original" "$expected"
+            gh release delete-asset "${GITHUB_REF_NAME}" "$original_name" \
+              --repo "${GITHUB_REPOSITORY}" --yes
+            gh release upload "${GITHUB_REF_NAME}" "$expected" \
+              --repo "${GITHUB_REPOSITORY}" --clobber
+          elif ((${#candidates[@]} != 0)) || [[ ! -s "$expected" ]]; then
+            printf 'expected exactly one AppImage to normalize\n' >&2
+            exit 1
+          fi
       - name: Verify release artifact set and package metadata
         run: packaging/verify-release-assets.sh release-assets
+      - name: Verify the AppImage starts offline
+        run: packaging/verify-appimage-launch.sh release-assets/*.AppImage
       - name: Generate and upload SHA-256 checksums
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
