@@ -1,0 +1,238 @@
+name: Verify Windows release installs
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published or draft release tag to verify
+        required: true
+        default: v0.1.0
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  clean-install:
+    name: ${{ matrix.kind }} clean install
+    runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kind: nsis
+          - kind: msi
+          - kind: portable
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Resolve versioned asset name
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          PACKAGE_KIND: ${{ matrix.kind }}
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v(?<version>[0-9]+\.[0-9]+\.[0-9]+)$') {
+            throw "Expected a stable vMAJOR.MINOR.PATCH tag, got $env:RELEASE_TAG"
+          }
+          $version = $Matches.version
+          $asset = switch ($env:PACKAGE_KIND) {
+            'nsis' { "Consilium_${version}_x64-setup.exe" }
+            'msi' { "Consilium_${version}_x64_en-US.msi" }
+            'portable' { "Consilium_${version}_windows_x86_64_portable.zip" }
+            default { throw "Unknown package kind: $env:PACKAGE_KIND" }
+          }
+          "EXPECTED_VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "ASSET_NAME=$asset" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Download the reviewed asset and checksum manifest
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          New-Item -ItemType Directory -Path assets | Out-Null
+          gh release download "$env:RELEASE_TAG" `
+            --repo "$env:GITHUB_REPOSITORY" `
+            --dir assets `
+            --pattern "$env:ASSET_NAME" `
+            --pattern SHA256SUMS
+
+      - name: Verify checksum and record package signing state
+        shell: pwsh
+        env:
+          PACKAGE_KIND: ${{ matrix.kind }}
+        run: |
+          $asset = (Resolve-Path (Join-Path assets $env:ASSET_NAME)).Path
+          $escaped = [Regex]::Escape($env:ASSET_NAME)
+          $checksumLines = @(
+            Get-Content assets\SHA256SUMS | Where-Object {
+              $_ -match "^(?<hash>[0-9a-fA-F]{64})\s+\*?$escaped$"
+            }
+          )
+          if ($checksumLines.Count -ne 1) {
+            throw "Expected one checksum for $env:ASSET_NAME"
+          }
+          $null = $checksumLines[0] -match "^(?<hash>[0-9a-fA-F]{64})"
+          $expected = $Matches.hash.ToLowerInvariant()
+          $actual = (Get-FileHash -Algorithm SHA256 $asset).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) {
+            throw "SHA-256 mismatch for $env:ASSET_NAME"
+          }
+
+          if ($env:PACKAGE_KIND -ne 'portable') {
+            $signature = Get-AuthenticodeSignature $asset
+            $signatureStatus = $signature.Status.ToString()
+            Write-Host "$env:ASSET_NAME signing state: $signatureStatus"
+            if ($signatureStatus -notin @('NotSigned', 'Valid')) {
+              throw "Unexpected signing state: $signatureStatus"
+            }
+          }
+
+      - name: Install, inspect, and uninstall package
+        shell: pwsh
+        env:
+          PACKAGE_KIND: ${{ matrix.kind }}
+        run: |
+          function Invoke-Checked {
+            param([string]$File, [string]$Arguments, [string]$Label)
+
+            $process = Start-Process -FilePath $File -ArgumentList $Arguments `
+              -Wait -PassThru
+            if ($process.ExitCode -notin @(0, 3010)) {
+              throw "$Label failed with exit code $($process.ExitCode)"
+            }
+          }
+
+          function Assert-UsableSignatureState {
+            param([string]$Path, [string]$Label)
+
+            $signature = Get-AuthenticodeSignature $Path
+            $signatureStatus = $signature.Status.ToString()
+            Write-Host "$Label signing state: $signatureStatus"
+            if ($signatureStatus -notin @('NotSigned', 'Valid')) {
+              throw "$Label has unexpected signing state $signatureStatus"
+            }
+          }
+
+          $asset = (Resolve-Path (Join-Path assets $env:ASSET_NAME)).Path
+
+          switch ($env:PACKAGE_KIND) {
+            'nsis' {
+              $installDir = Join-Path $env:LOCALAPPDATA 'Consilium'
+              $executable = Join-Path $installDir 'grok-chat-desktop.exe'
+              $notices = Join-Path $installDir 'THIRD_PARTY_NOTICES.txt'
+              $arpKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Consilium'
+
+              Invoke-Checked $asset '/S' 'NSIS installation'
+              if (-not (Test-Path $executable)) { throw 'NSIS executable was not installed' }
+              if (-not (Test-Path $notices)) { throw 'NSIS notices were not installed' }
+              Assert-UsableSignatureState $executable 'NSIS application executable'
+
+              $arp = Get-ItemProperty $arpKey
+              if ($arp.DisplayName -ne 'Consilium' -or
+                  $arp.DisplayVersion -ne $env:EXPECTED_VERSION -or
+                  $arp.Publisher -ne 'Flintglade') {
+                throw 'NSIS Add/Remove Programs metadata is incorrect'
+              }
+              $actualLocation = [IO.Path]::GetFullPath(
+                $arp.InstallLocation.Trim('"')
+              ).TrimEnd('\')
+              $expectedLocation = [IO.Path]::GetFullPath($installDir).TrimEnd('\')
+              if ($actualLocation -ne $expectedLocation) {
+                throw "Unexpected NSIS install location: $actualLocation"
+              }
+
+              $uninstaller = Join-Path $installDir 'uninstall.exe'
+              Invoke-Checked $uninstaller '/S' 'NSIS uninstallation'
+              $deadline = [DateTime]::UtcNow.AddSeconds(30)
+              while (((Test-Path $executable) -or (Test-Path $arpKey)) -and
+                     [DateTime]::UtcNow -lt $deadline) {
+                Start-Sleep -Milliseconds 500
+              }
+              if (Test-Path $executable) { throw 'NSIS executable survived uninstall' }
+              if (Test-Path $arpKey) { throw 'NSIS ARP entry survived uninstall' }
+            }
+
+            'msi' {
+              $installLog = Join-Path $env:RUNNER_TEMP 'consilium-msi-install.log'
+              $uninstallLog = Join-Path $env:RUNNER_TEMP 'consilium-msi-uninstall.log'
+              $installDir = Join-Path $env:ProgramFiles 'Consilium'
+              $executable = Join-Path $installDir 'grok-chat-desktop.exe'
+              $notices = Join-Path $installDir 'THIRD_PARTY_NOTICES.txt'
+              $msiexec = Join-Path $env:SystemRoot 'System32\msiexec.exe'
+
+              Invoke-Checked $msiexec `
+                "/i `"$asset`" /qn /norestart /L*V `"$installLog`"" `
+                'MSI installation'
+              if (-not (Test-Path $executable)) { throw 'MSI executable was not installed' }
+              if (-not (Test-Path $notices)) { throw 'MSI notices were not installed' }
+              Assert-UsableSignatureState $executable 'MSI application executable'
+
+              $arp = @(
+                Get-ItemProperty `
+                  'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*' `
+                  -ErrorAction SilentlyContinue
+                Get-ItemProperty `
+                  'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' `
+                  -ErrorAction SilentlyContinue
+              ) | Where-Object {
+                $_.DisplayName -eq 'Consilium' -and $_.Publisher -eq 'Flintglade'
+              }
+              if (@($arp).Count -ne 1) { throw 'Expected exactly one MSI ARP entry' }
+              if ($arp.DisplayVersion -ne $env:EXPECTED_VERSION) {
+                throw 'Incorrect MSI version'
+              }
+
+              Invoke-Checked $msiexec `
+                "/x `"$asset`" /qn /norestart /L*V `"$uninstallLog`"" `
+                'MSI uninstallation'
+              if (Test-Path $executable) { throw 'MSI executable survived uninstall' }
+            }
+
+            'portable' {
+              $portableRoot = Join-Path $env:RUNNER_TEMP 'consilium-portable'
+              Expand-Archive -Path $asset -DestinationPath $portableRoot
+              $expected = @(
+                'Consilium.exe',
+                'LICENSE.txt',
+                'README.txt',
+                'THIRD_PARTY_NOTICES.txt'
+              ) | Sort-Object
+              $actual = @(
+                Get-ChildItem $portableRoot -File | ForEach-Object Name | Sort-Object
+              )
+              if (Compare-Object $expected $actual) {
+                throw 'Portable root contents differ from the reviewed four-file layout'
+              }
+              if (@(Get-ChildItem $portableRoot -Directory -Recurse).Count) {
+                throw 'Portable ZIP contains unexpected directories'
+              }
+              if ((Get-FileHash "$portableRoot\LICENSE.txt").Hash -ne
+                  (Get-FileHash LICENSE).Hash) {
+                throw 'Portable license differs from repository LICENSE'
+              }
+              if ((Get-FileHash "$portableRoot\THIRD_PARTY_NOTICES.txt").Hash -ne
+                  (Get-FileHash THIRD_PARTY_NOTICES.txt).Hash) {
+                throw 'Portable notices differ from repository notices'
+              }
+              Assert-UsableSignatureState `
+                "$portableRoot\Consilium.exe" 'Portable application executable'
+            }
+
+            default { throw "Unknown package kind: $env:PACKAGE_KIND" }
+          }
+
+      - name: Upload MSI installation logs
+        if: always() && matrix.kind == 'msi'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: consilium-msi-install-logs-${{ inputs.tag }}
+          path: ${{ runner.temp }}/consilium-msi-*.log
+          if-no-files-found: warn
+          retention-days: 7
