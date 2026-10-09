@@ -5,6 +5,7 @@ use ratatui::{
     widgets::{Block, Borders, Clear, Paragraph},
     Frame,
 };
+use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
 use crate::app::{App, ConnectionState};
@@ -316,56 +317,16 @@ struct DisplayUnit {
     width: usize,
 }
 
-fn is_regional_indicator(c: char) -> bool {
-    ('\u{1f1e6}'..='\u{1f1ff}').contains(&c)
-}
-
-/// Split text into indivisible terminal units. `unicode-width` understands
-/// combining marks and emoji ligatures as strings, so joining whenever the
-/// combined width contracts keeps common modifier, variation-selector, and
-/// ZWJ sequences together without adding another text dependency.
+/// Segment once and measure each complete cluster once. Measuring every prefix
+/// of a long combining sequence makes untrusted model output quadratic.
 fn display_units(text: &str) -> Vec<DisplayUnit> {
-    let scalars = text
-        .char_indices()
-        .map(|(start, c)| (start, start + c.len_utf8(), c))
-        .collect::<Vec<_>>();
-    let mut units = Vec::new();
-    let mut index = 0;
-
-    while index < scalars.len() {
-        let start = scalars[index].0;
-        let mut end = scalars[index].1;
-        let first = scalars[index].2;
-        index += 1;
-
-        while index < scalars.len() {
-            let next_end = scalars[index].1;
-            let next = &text[scalars[index].0..next_end];
-            let current = &text[start..end];
-            let combined = &text[start..next_end];
-            let current_width = current.width();
-            let next_width = next.width();
-            let contracts = combined.width() < current_width.saturating_add(next_width);
-            let regional_pair = current.chars().count() == 1
-                && is_regional_indicator(first)
-                && is_regional_indicator(scalars[index].2);
-
-            if next_width == 0 || current_width == 0 || contracts || regional_pair {
-                end = next_end;
-                index += 1;
-            } else {
-                break;
-            }
-        }
-
-        units.push(DisplayUnit {
+    text.grapheme_indices(true)
+        .map(|(start, grapheme)| DisplayUnit {
             start,
-            end,
-            width: text[start..end].width(),
-        });
-    }
-
-    units
+            end: start + grapheme.len(),
+            width: grapheme.width(),
+        })
+        .collect()
 }
 
 /// Word-wrap one logical line to `width` terminal columns, preserving
@@ -485,6 +446,15 @@ pub fn composer_cursor(input: &str, cursor_byte: usize, width: usize) -> (u16, u
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn long_combining_sequence_keeps_one_cluster_without_prefix_rescanning() {
+        let cluster = format!("e{}", "\u{301}".repeat(100_000));
+        let text = format!("{cluster}X");
+        let started = std::time::Instant::now();
+        assert_eq!(wrap_line(&text, 1), vec![cluster, "X".to_string()]);
+        assert!(started.elapsed() < std::time::Duration::from_secs(5));
+    }
 
     #[test]
     fn wrap_preserves_internal_spacing() {

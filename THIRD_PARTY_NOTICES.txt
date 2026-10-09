@@ -18,7 +18,7 @@ or UTF-8 text.
 This generated file records upstream terms and notices; it does not replace
 the upstream license terms or make a legal conclusion about them.
 
-Cargo.lock SHA-256: 6298bc1d13d4995aa328b6d383b22919849f57e6f654b78e8ddd1025677e91a0
+Cargo.lock SHA-256: ad9df44043d35a36c0658dc7f82be0c7e509a2738b589e7fb91f34e2e79528c5
 Complete locked third-party inventory: 565 packages
 Native release-target dependency set: 354 packages
 Included release-target materials: 638 files
@@ -142,21 +142,21 @@ Upstream repository: https://github.com/cuviper/autocfg
 Source package: https://crates.io/crates/autocfg/1.5.1
 Source archive: https://crates.io/api/v1/crates/autocfg/1.5.1/download
 
-Package: aws-lc-rs 1.17.1
+Package: aws-lc-rs 1.18.1
 Declared license: ISC AND (Apache-2.0 OR ISC)
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Cargo package authors: AWS-LibCrypto
 Upstream repository: https://github.com/aws/aws-lc-rs
-Source package: https://crates.io/crates/aws-lc-rs/1.17.1
-Source archive: https://crates.io/api/v1/crates/aws-lc-rs/1.17.1/download
+Source package: https://crates.io/crates/aws-lc-rs/1.18.1
+Source archive: https://crates.io/api/v1/crates/aws-lc-rs/1.18.1/download
 
-Package: aws-lc-sys 0.42.0
+Package: aws-lc-sys 0.45.0
 Declared license: ISC AND (Apache-2.0 OR ISC) AND Apache-2.0 AND MIT AND BSD-3-Clause AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR ISC OR MIT-0)
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Cargo package authors: AWS-LC
 Upstream repository: https://github.com/aws/aws-lc-rs
-Source package: https://crates.io/crates/aws-lc-sys/0.42.0
-Source archive: https://crates.io/api/v1/crates/aws-lc-sys/0.42.0/download
+Source package: https://crates.io/crates/aws-lc-sys/0.45.0
+Source archive: https://crates.io/api/v1/crates/aws-lc-sys/0.45.0/download
 
 Package: backtrace 0.3.76
 Declared license: MIT OR Apache-2.0
@@ -419,13 +419,13 @@ Upstream repository: https://github.com/katharostech/cfg_aliases
 Source package: https://crates.io/crates/cfg_aliases/0.2.1
 Source archive: https://crates.io/api/v1/crates/cfg_aliases/0.2.1/download
 
-Package: chacha20 0.10.1
+Package: chacha20 0.10.2
 Declared license: MIT OR Apache-2.0
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Cargo package authors: RustCrypto Developers
 Upstream repository: https://github.com/RustCrypto/stream-ciphers
-Source package: https://crates.io/crates/chacha20/0.10.1
-Source archive: https://crates.io/api/v1/crates/chacha20/0.10.1/download
+Source package: https://crates.io/crates/chacha20/0.10.2
+Source archive: https://crates.io/api/v1/crates/chacha20/0.10.2/download
 
 Package: chrono 0.4.45
 Declared license: MIT OR Apache-2.0
@@ -1781,13 +1781,13 @@ Upstream repository: https://github.com/rust-lang/log
 Source package: https://crates.io/crates/log/0.4.33
 Source archive: https://crates.io/api/v1/crates/log/0.4.33/download
 
-Package: lru 0.18.0
+Package: lru 0.18.2
 Declared license: MIT
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Cargo package authors: Jerome Froelich <jeromefroelic@hotmail.com>
 Upstream repository: https://github.com/jeromefroe/lru-rs.git
-Source package: https://crates.io/crates/lru/0.18.0
-Source archive: https://crates.io/api/v1/crates/lru/0.18.0/download
+Source package: https://crates.io/crates/lru/0.18.2
+Source archive: https://crates.io/api/v1/crates/lru/0.18.2/download
 
 Package: lru-slab 0.1.2
 Declared license: MIT OR Apache-2.0 OR Zlib
@@ -2691,12 +2691,12 @@ Upstream repository: https://github.com/bytecodealliance/rustix
 Source package: https://crates.io/crates/rustix/1.1.4
 Source archive: https://crates.io/api/v1/crates/rustix/1.1.4/download
 
-Package: rustls 0.23.41
+Package: rustls 0.23.45
 Declared license: Apache-2.0 OR ISC OR MIT
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Upstream repository: https://github.com/rustls/rustls
-Source package: https://crates.io/crates/rustls/0.23.41
-Source archive: https://crates.io/api/v1/crates/rustls/0.23.41/download
+Source package: https://crates.io/crates/rustls/0.23.45
+Source archive: https://crates.io/api/v1/crates/rustls/0.23.45/download
 
 Package: rustls-native-certs 0.8.4
 Declared license: Apache-2.0 OR ISC OR MIT
@@ -2726,12 +2726,12 @@ Upstream repository: https://github.com/rustls/rustls-platform-verifier
 Source package: https://crates.io/crates/rustls-platform-verifier-android/0.1.1
 Source archive: https://crates.io/api/v1/crates/rustls-platform-verifier-android/0.1.1/download
 
-Package: rustls-webpki 0.103.13
+Package: rustls-webpki 0.103.15
 Declared license: ISC
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Upstream repository: https://github.com/rustls/webpki
-Source package: https://crates.io/crates/rustls-webpki/0.103.13
-Source archive: https://crates.io/api/v1/crates/rustls-webpki/0.103.13/download
+Source package: https://crates.io/crates/rustls-webpki/0.103.15
+Source archive: https://crates.io/api/v1/crates/rustls-webpki/0.103.15/download
 
 Package: rustversion 1.0.22
 Declared license: MIT OR Apache-2.0
@@ -5945,13 +5945,13 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 ----- END UPSTREAM MATERIAL -----
 
-Package: aws-lc-rs 1.17.1
+Package: aws-lc-rs 1.18.1
 Declared license: ISC AND (Apache-2.0 OR ISC)
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Cargo package authors: AWS-LibCrypto
 Upstream repository: https://github.com/aws/aws-lc-rs
-Source package: https://crates.io/crates/aws-lc-rs/1.17.1
-Source archive: https://crates.io/api/v1/crates/aws-lc-rs/1.17.1/download
+Source package: https://crates.io/crates/aws-lc-rs/1.18.1
+Source archive: https://crates.io/api/v1/crates/aws-lc-rs/1.18.1/download
 
 Material: LICENSE
 Material origin: locked Cargo source archive path: LICENSE
@@ -6161,13 +6161,13 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ----- END UPSTREAM MATERIAL -----
 
-Package: aws-lc-sys 0.42.0
+Package: aws-lc-sys 0.45.0
 Declared license: ISC AND (Apache-2.0 OR ISC) AND Apache-2.0 AND MIT AND BSD-3-Clause AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR ISC OR MIT-0)
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Cargo package authors: AWS-LC
 Upstream repository: https://github.com/aws/aws-lc-rs
-Source package: https://crates.io/crates/aws-lc-sys/0.42.0
-Source archive: https://crates.io/api/v1/crates/aws-lc-sys/0.42.0/download
+Source package: https://crates.io/crates/aws-lc-sys/0.45.0
+Source archive: https://crates.io/api/v1/crates/aws-lc-sys/0.45.0/download
 
 Material: LICENSE
 Material origin: locked Cargo source archive path: LICENSE
@@ -41842,12 +41842,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ----- END UPSTREAM MATERIAL -----
 
-Package: rustls-webpki 0.103.13
+Package: rustls-webpki 0.103.15
 Declared license: ISC
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Upstream repository: https://github.com/rustls/webpki
-Source package: https://crates.io/crates/rustls-webpki/0.103.13
-Source archive: https://crates.io/api/v1/crates/rustls-webpki/0.103.13/download
+Source package: https://crates.io/crates/rustls-webpki/0.103.15
+Source archive: https://crates.io/api/v1/crates/rustls-webpki/0.103.15/download
 
 Material: LICENSE
 Material origin: locked Cargo source archive path: LICENSE
@@ -41874,12 +41874,12 @@ The files under third-party/chromium are licensed as described in
 third-party/chromium/LICENSE.
 ----- END UPSTREAM MATERIAL -----
 
-Package: rustls 0.23.41
+Package: rustls 0.23.45
 Declared license: Apache-2.0 OR ISC OR MIT
 Cargo source: registry+https://github.com/rust-lang/crates.io-index
 Upstream repository: https://github.com/rustls/rustls
-Source package: https://crates.io/crates/rustls/0.23.41
-Source archive: https://crates.io/api/v1/crates/rustls/0.23.41/download
+Source package: https://crates.io/crates/rustls/0.23.45
+Source archive: https://crates.io/api/v1/crates/rustls/0.23.45/download
 
 Material: LICENSE-APACHE
 Material origin: locked Cargo source archive path: LICENSE-APACHE

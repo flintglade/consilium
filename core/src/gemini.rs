@@ -57,10 +57,15 @@ pub fn find_gemini() -> Option<PathBuf> {
     find_program(CliProvider::Gemini)
 }
 
+pub(crate) fn visible_prompts_allowed() -> bool {
+    std::env::var("CONSILIUM_ALLOW_VISIBLE_PROMPTS").is_ok_and(|value| value == "1")
+}
+
 #[derive(Clone)]
 pub struct GeminiBackend {
     program: PathBuf,
     model: Arc<Mutex<Option<String>>>,
+    allow_visible_prompt: bool,
 }
 
 fn conversation_prompt(messages: &[Message], agent: bool) -> String {
@@ -121,6 +126,7 @@ impl GeminiBackend {
         Self {
             program,
             model: Arc::new(Mutex::new(model)),
+            allow_visible_prompt: visible_prompts_allowed(),
         }
     }
 
@@ -183,6 +189,12 @@ impl GeminiBackend {
         if !images.is_empty() {
             return Err(color_eyre::eyre::eyre!(
                 "Gemini image attachments are not wired through CONSILIUM yet. Send text for now."
+            ));
+        }
+
+        if !self.allow_visible_prompt {
+            return Err(color_eyre::eyre::eyre!(
+                "Antigravity exposes conversation text in process arguments. Use the Google AI API connector for private conversations, or explicitly set CONSILIUM_ALLOW_VISIBLE_PROMPTS=1 in your trusted configuration to accept this local privacy limitation."
             ));
         }
 
@@ -367,7 +379,8 @@ mod tests {
         drop(file);
         std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
 
-        let backend = GeminiBackend::new(script, None);
+        let mut backend = GeminiBackend::new(script, None);
+        backend.allow_visible_prompt = true;
         let (tx, mut rx) = crate::api::stream_event_channel();
         tokio::time::timeout(
             std::time::Duration::from_secs(5),
@@ -426,7 +439,8 @@ mod tests {
         drop(file);
         std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
 
-        let backend = GeminiBackend::new(script, None);
+        let mut backend = GeminiBackend::new(script, None);
+        backend.allow_visible_prompt = true;
         let (tx, mut rx) = crate::api::stream_event_channel();
         backend
             .stream_chat(
@@ -495,7 +509,8 @@ mod tests {
         drop(file);
         std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
 
-        let backend = GeminiBackend::new(script, None);
+        let mut backend = GeminiBackend::new(script, None);
+        backend.allow_visible_prompt = true;
         let (tx, mut rx) = crate::api::stream_event_channel();
         tokio::time::timeout(
             std::time::Duration::from_secs(5),
@@ -522,5 +537,28 @@ mod tests {
             StreamEvent::Finished => panic!("provider unexpectedly finished"),
         }
         std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[tokio::test]
+    async fn argument_transport_requires_explicit_privacy_opt_in() {
+        let mut backend = GeminiBackend::new(PathBuf::from("must-not-be-launched"), None);
+        backend.allow_visible_prompt = false;
+        let (tx, _) = crate::api::stream_event_channel();
+        let error = backend
+            .stream_chat_inner(
+                vec![Message {
+                    role: "user".into(),
+                    content: "private conversation".into(),
+                }],
+                Vec::new(),
+                true,
+                CancellationToken::new(),
+                tx,
+            )
+            .await
+            .unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("CONSILIUM_ALLOW_VISIBLE_PROMPTS=1"));
     }
 }
