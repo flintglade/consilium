@@ -90,6 +90,22 @@ appstreamcli validate --no-net "$appimage_meta"
 [[ -s desktop/src-tauri/icons/icon.ico ]] || fail "Windows icon is missing"
 [[ -s desktop/icons/consilium.svg ]] || fail "scalable Flintglade icon is missing"
 [[ -s packaging/flatpak/cargo-sources.json ]] || fail "offline Cargo sources are missing"
+python3 - <<'PY'
+import json
+import tomllib
+from pathlib import Path
+
+packages = tomllib.loads(Path("Cargo.lock").read_text())["package"]
+expected = {
+    f"https://static.crates.io/crates/{p['name']}/{p['name']}-{p['version']}.crate": p["checksum"]
+    for p in packages if p.get("source", "").startswith("registry+")
+}
+sources = json.loads(Path("packaging/flatpak/cargo-sources.json").read_text())
+actual = {s["url"]: s.get("sha256") for s in sources
+          if s.get("url", "").startswith("https://static.crates.io/crates/")}
+if actual != expected:
+    raise SystemExit("offline Flatpak sources differ from Cargo.lock; regenerate cargo-sources.json")
+PY
 [[ -s LICENSE ]] || fail "Apache-2.0 license file is missing"
 [[ -s THIRD_PARTY_NOTICES.txt ]] || fail "third-party notices are missing"
 [[ -s packaging/attribution-supplements.json ]] ||

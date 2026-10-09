@@ -178,7 +178,7 @@ fn provider_specs() -> Vec<ProviderSpec> {
             status_command: None,
             model_family: "Gemini models via Antigravity CLI",
             docs_url: "https://antigravity.google/docs/gcli-migration",
-            note: "Official Antigravity CLI adapter. Credentials remain in Google's keyring.",
+            note: "Antigravity exposes prompt text to local process inspectors. Use Google AI API for private text, or set CONSILIUM_ALLOW_VISIBLE_PROMPTS=1 to opt in. Credentials remain in Google's keyring.",
             active: true,
             required_env: &[],
             local: false,
@@ -359,7 +359,8 @@ where
         .map(|spec| {
             let installed = spec.cli_provider.map(&mut cli_installed).unwrap_or(false);
             let configured = env_configured(spec.required_env);
-            let available = spec.active && (installed || configured);
+            let privacy_allowed = spec.id != "gemini" || crate::gemini::visible_prompts_allowed();
+            let available = spec.active && (installed || configured) && privacy_allowed;
             let local = spec.local
                 && std::env::var("OPENAI_COMPAT_BASE_URL")
                     .ok()

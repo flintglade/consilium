@@ -15,7 +15,7 @@ use api::{ApiClient, Message, StreamEvent, StreamEventSender};
 use claude::ClaudeBackend;
 use cli::{CliBackend, ImageAttachment};
 use codex::CodexBackend;
-use color_eyre::eyre::Result;
+use color_eyre::eyre::{Result, WrapErr};
 use gemini::GeminiBackend;
 use google_api::GoogleApiClient;
 
@@ -484,7 +484,7 @@ fn normalized_restored_model(model: Option<String>, default_aliases: &[&str]) ->
 }
 
 pub fn load_backend(provider_id: &str) -> Result<Backend> {
-    load_dotenv();
+    load_dotenv()?;
     match provider_id {
         "grok" => load_grok_cli(),
         "claude" => {
@@ -635,26 +635,25 @@ fn load_grok_cli() -> Result<Backend> {
     )))
 }
 
-// Keep source-tree discovery first, then fall back to the installed app's
-// per-user configuration path. This function only reads existing files.
-fn load_dotenv() {
-    if dotenvy::dotenv().is_ok() {
-        return;
-    }
-    if let Ok(exe) = std::env::current_exe() {
-        for dir in exe.ancestors().skip(1) {
-            if dotenvy::from_path(dir.join(".env")).is_ok() {
-                return;
-            }
-        }
+// Configuration can select executable paths and credential recipients. Only
+// read a user-owned stable location or a file the operator explicitly selected;
+// never infer configuration from an arbitrary launch/checkout directory.
+fn load_dotenv() -> Result<()> {
+    if let Some(path) = std::env::var_os("CONSILIUM_ENV_FILE") {
+        dotenvy::from_path(&path)
+            .wrap_err("could not read the explicitly selected CONSILIUM_ENV_FILE")?;
+        return Ok(());
     }
     if let Some(path) = child_io::user_config_env_path() {
-        let _ = dotenvy::from_path(path);
+        if path.exists() {
+            dotenvy::from_path(path).wrap_err("could not read the per-user Consilium .env")?;
+        }
     }
+    Ok(())
 }
 
 pub fn load_config() -> Result<Backend> {
-    load_dotenv();
+    load_dotenv()?;
 
     let model_env = std::env::var("GROK_MODEL").ok();
     let choice = std::env::var("GROK_BACKEND")
@@ -684,6 +683,66 @@ pub fn load_config() -> Result<Backend> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn configuration_ignores_untrusted_launch_directory() {
+        const CHILD: &str = "CONSILIUM_CONFIG_REGRESSION_CHILD";
+        if std::env::var_os(CHILD).is_some() {
+            load_dotenv().unwrap();
+            assert!(std::env::var_os("GROK_CLI_BIN").is_none());
+            assert_eq!(
+                std::env::var("CONSILIUM_DEFAULT_PROVIDER").unwrap(),
+                "trusted-user-config"
+            );
+            return;
+        }
+        let root = std::env::temp_dir().join(format!(
+            "consilium-config-regression-{}",
+            std::process::id()
+        ));
+        let untrusted = root.join("untrusted");
+        let config = root.join("config");
+        std::fs::create_dir_all(&untrusted).unwrap();
+        std::fs::create_dir_all(config.join("consilium")).unwrap();
+        std::fs::write(
+            untrusted.join(".env"),
+            "GROK_CLI_BIN=untrusted-executable\n",
+        )
+        .unwrap();
+        std::fs::write(
+            config.join("consilium/.env"),
+            "CONSILIUM_DEFAULT_PROVIDER=trusted-user-config\n",
+        )
+        .unwrap();
+        let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "tests::configuration_ignores_untrusted_launch_directory",
+            ])
+            .current_dir(&untrusted)
+            .env(CHILD, "1")
+            .env("XDG_CONFIG_HOME", &config)
+            .env("APPDATA", &config)
+            .env_remove("CONSILIUM_ENV_FILE")
+            .env_remove("CONSILIUM_DEFAULT_PROVIDER")
+            .env_remove("GROK_CLI_BIN");
+        if cfg!(windows) {
+            std::fs::create_dir_all(config.join("Flintglade/Consilium")).unwrap();
+            std::fs::write(
+                config.join("Flintglade/Consilium/.env"),
+                "CONSILIUM_DEFAULT_PROVIDER=trusted-user-config\n",
+            )
+            .unwrap();
+        }
+        let output = command.output().unwrap();
+        std::fs::remove_dir_all(root).unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stdout)
+        );
+    }
 
     #[test]
     fn fresh_cli_fallback_receives_labeled_conversation_history() {

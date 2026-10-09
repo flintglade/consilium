@@ -118,7 +118,7 @@ homepage, source, and optional-support links directly from the artifact.
 
 ## AppImageHub
 
-AppImageHub is a community catalog, not a file host. Consilium's AppImage must
+The [Consilium catalog submission](https://github.com/AppImage/appimage.github.io/pull/3790) was merged on September 26, 2026. AppImageHub is a community catalog, not a file host. Consilium's AppImage must
 remain directly downloadable from a public GitHub release; it must not be
 wrapped in a ZIP or require authentication. Once a stable release passes the
 artifact check and runs on the catalog's supported compatibility baseline, the

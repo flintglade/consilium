@@ -31,6 +31,11 @@
     <control>pointing</control>
   </supports>
   <releases>
+    <release version="0.1.1" date="2026-10-09">
+      <description>
+        <p>Hardened configuration discovery, explicit provider privacy controls, bounded terminal layout, and patched TLS dependencies.</p>
+      </description>
+    </release>
     <release version="0.1.0" date="2026-07-13">
       <description>
         <p>Initial Consilium desktop release with local and optional provider routes, explainable routing, streaming responses, and recoverable session history.</p>

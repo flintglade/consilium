@@ -228,7 +228,7 @@ mod tests {
 
     #[test]
     fn help_identifies_the_product_version_and_terminal_commands() {
-        assert!(HELP.starts_with("Consilium 0.1.0\n"));
+        assert!(HELP.starts_with(&format!("Consilium {}\n", env!("CARGO_PKG_VERSION"))));
         assert!(HELP.contains("Usage: grok-chat [OPTIONS]"));
         assert!(HELP.contains("-V, --version"));
         assert!(HELP.contains("type /help"));

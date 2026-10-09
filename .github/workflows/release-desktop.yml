@@ -33,8 +33,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           ref: ${{ env.SOURCE_REF }}
       - uses: dtolnay/rust-toolchain@a75363d06101555fc97c6c7e1e65670b99104d98 # 1.96.1
       - name: Install metadata validators
@@ -58,8 +59,9 @@ jobs:
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           ref: ${{ env.SOURCE_REF }}
       - uses: dtolnay/rust-toolchain@a75363d06101555fc97c6c7e1e65670b99104d98 # 1.96.1
       - uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
@@ -155,8 +157,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Check out source
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           ref: ${{ env.SOURCE_REF }}
       - name: Install package inspection tools
         run: |
@@ -219,7 +222,8 @@ jobs:
             | sort -z \
             | while IFS= read -r -d '' file; do
                 (cd release-assets && sha256sum "$file")
-              done > SHA256SUMS
+              done > "$RUNNER_TEMP/consilium-SHA256SUMS"
+          mv "$RUNNER_TEMP/consilium-SHA256SUMS" SHA256SUMS
           test -s SHA256SUMS
           gh release upload "${RELEASE_TAG}" SHA256SUMS \
             --repo "${GITHUB_REPOSITORY}" --clobber

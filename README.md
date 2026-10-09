@@ -48,9 +48,7 @@ the downloadable files have passed the repository's package inspection step.
 | Linux x86_64 | AppImage, `.deb`, `.rpm` | Direct downloads built on Ubuntu 22.04; each package includes the Apache-2.0 license and locked Rust dependency notices |
 | Linux from source | Local Flatpak recipe | Supports local compatible endpoints and direct APIs; host provider CLIs are outside its sandbox |
 
-AppImageHub and the Snap Store are possible discovery channels, but neither is
-currently presented as an available Consilium download. AppImageHub requires a
-public, tested AppImage release and catalog review. A Snap needs its own tested
+The AppImageHub catalog submission was [accepted](https://github.com/AppImage/appimage.github.io/pull/3790) on September 26, 2026; release files remain hosted on GitHub. A Snap needs its own tested
 recipe and Store review, with the supported provider routes determined by its
 confinement model. The local Flatpak recipe is not a Flathub listing. See the
 [distribution plan](docs/DISTRIBUTION.md) for the current status and exact
@@ -95,7 +93,8 @@ Install a server that exposes an OpenAI-compatible chat-completions endpoint,
 download a model using that server, and copy the example configuration:
 
 ```bash
-cp .env.example .env
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/consilium"
+cp .env.example "${XDG_CONFIG_HOME:-$HOME/.config}/consilium/.env"
 ```
 
 For Ollama, a minimal `.env` configuration is:
@@ -122,17 +121,18 @@ No cloud account or Consilium account is needed.
 ## Provider configuration
 
 Consilium reads an optional `.env` without requiring a shell profile. Existing
-process variables take precedence. It then checks the current directory and
-its parents, the executable's directory and its parents, and finally the
-installed-app location for the current user:
+process variables take precedence. It reads the installed-app location for the
+current user, or the exact file selected with `CONSILIUM_ENV_FILE`:
 
 | Platform | Per-user `.env` location |
 | --- | --- |
 | Linux | `${XDG_CONFIG_HOME:-$HOME/.config}/consilium/.env` |
 | Windows | `%APPDATA%\Flintglade\Consilium\.env` (falling back to `%LOCALAPPDATA%`) |
 
-This preserves a project-root `.env` for source builds while giving installed
-desktop builds a stable location. Consilium only reads these files: it never
+To use a trusted source-tree configuration, set `CONSILIUM_ENV_FILE` to its
+absolute path. Launch-directory and ancestor `.env` files are never discovered
+automatically: they can change executable paths and credential recipients.
+Consilium only reads these files: it never
 creates, modifies, or copies them, and it never saves provider keys into its
 session data. `.env` is gitignored. Never commit credentials; `.env.example`
 contains names and non-secret examples only.
@@ -191,7 +191,11 @@ The current compatibility smoke matrix was run on Linux with Grok CLI 0.2.99,
 Claude Code 2.1.197, Codex CLI 0.144.1, and Antigravity CLI 1.1.1. These vendor
 tools update independently and are not bundled or version-locked by
 Consilium; an incompatible or missing binary stays unavailable with an
-actionable install/login message. Optional vendor CLIs may implement their own
+actionable install/login message. Antigravity 1.1.1 accepts its prompt only as a
+command-line argument, which local process inspectors may read while it runs.
+Use the Google AI API connector for confidential Gemini conversations; the
+Antigravity Agent route is disabled until you set `CONSILIUM_ALLOW_VISIBLE_PROMPTS=1` in trusted configuration to accept this limitation. It is unsuitable for confidential text on shared hosts.
+Optional vendor CLIs may implement their own
 diagnostics or telemetry under their own settings and terms. The fully local
 compatible route does not require any of those CLIs.
 
