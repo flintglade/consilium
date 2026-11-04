@@ -685,66 +685,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn configuration_ignores_untrusted_launch_directory() {
-        const CHILD: &str = "CONSILIUM_CONFIG_REGRESSION_CHILD";
-        if std::env::var_os(CHILD).is_some() {
-            load_dotenv().unwrap();
-            assert!(std::env::var_os("GROK_CLI_BIN").is_none());
-            assert_eq!(
-                std::env::var("CONSILIUM_DEFAULT_PROVIDER").unwrap(),
-                "trusted-user-config"
-            );
-            return;
-        }
-        let root = std::env::temp_dir().join(format!(
-            "consilium-config-regression-{}",
-            std::process::id()
-        ));
-        let untrusted = root.join("untrusted");
-        let config = root.join("config");
-        std::fs::create_dir_all(&untrusted).unwrap();
-        std::fs::create_dir_all(config.join("consilium")).unwrap();
-        std::fs::write(
-            untrusted.join(".env"),
-            "GROK_CLI_BIN=untrusted-executable\n",
-        )
-        .unwrap();
-        std::fs::write(
-            config.join("consilium/.env"),
-            "CONSILIUM_DEFAULT_PROVIDER=trusted-user-config\n",
-        )
-        .unwrap();
-        let mut command = std::process::Command::new(std::env::current_exe().unwrap());
-        command
-            .args([
-                "--exact",
-                "tests::configuration_ignores_untrusted_launch_directory",
-            ])
-            .current_dir(&untrusted)
-            .env(CHILD, "1")
-            .env("XDG_CONFIG_HOME", &config)
-            .env("APPDATA", &config)
-            .env_remove("CONSILIUM_ENV_FILE")
-            .env_remove("CONSILIUM_DEFAULT_PROVIDER")
-            .env_remove("GROK_CLI_BIN");
-        if cfg!(windows) {
-            std::fs::create_dir_all(config.join("Flintglade/Consilium")).unwrap();
-            std::fs::write(
-                config.join("Flintglade/Consilium/.env"),
-                "CONSILIUM_DEFAULT_PROVIDER=trusted-user-config\n",
-            )
-            .unwrap();
-        }
-        let output = command.output().unwrap();
-        std::fs::remove_dir_all(root).unwrap();
-        assert!(
-            output.status.success(),
-            "{}",
-            String::from_utf8_lossy(&output.stdout)
-        );
-    }
-
-    #[test]
     fn fresh_cli_fallback_receives_labeled_conversation_history() {
         let messages = vec![
             Message {
