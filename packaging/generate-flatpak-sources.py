@@ -31,4 +31,4 @@ for package in tomllib.loads((ROOT / "Cargo.lock").read_text())["package"]:
         "dest-filename": ".cargo-checksum.json",
     })
 sources.append({"type": "inline", "contents": CONFIG, "dest": "cargo", "dest-filename": "config"})
-(ROOT / "packaging/flatpak/cargo-sources.json").write_text(json.dumps(sources, indent=4))
+(ROOT / "packaging/flatpak/cargo-sources.json").write_text(json.dumps(sources, indent=4) + "\n")
