@@ -357,22 +357,29 @@ mod tests {
     }
 
     #[cfg(unix)]
+    fn test_dir(name: &str) -> PathBuf {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../target/test-tmp")
+            .join(format!(
+                "consilium-antigravity-{name}-{}",
+                std::process::id()
+            ))
+    }
+
+    #[cfg(unix)]
     #[tokio::test]
     async fn heavy_stderr_cannot_deadlock_an_antigravity_response() {
         use std::io::Write;
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = std::env::temp_dir().join(format!(
-            "consilium-antigravity-stderr-drain-{}",
-            std::process::id()
-        ));
+        let dir = test_dir("stderr-drain");
         std::fs::create_dir_all(&dir).unwrap();
         let script = dir.join("fake-agy.sh");
         let args_capture = dir.join("arguments.txt");
         let mut file = std::fs::File::create(&script).unwrap();
         writeln!(
             file,
-            "#!/bin/sh\nprintf '%s\\n' \"$@\" > {}\ni=0\nwhile [ $i -lt 20000 ]; do printf 'diagnostic-%s\\n' \"$i\" >&2; i=$((i + 1)); done\nprintf 'not blocked\\n'",
+            "#!/bin/sh\nprintf '%s\\n' \"$@\" > '{}'\ni=0\nwhile [ $i -lt 20000 ]; do printf 'diagnostic-%s\\n' \"$i\" >&2; i=$((i + 1)); done\nprintf 'not blocked\\n'",
             args_capture.display()
         )
         .unwrap();
@@ -424,10 +431,7 @@ mod tests {
         use std::io::Write;
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = std::env::temp_dir().join(format!(
-            "consilium-antigravity-auth-error-{}",
-            std::process::id()
-        ));
+        let dir = test_dir("auth-error");
         std::fs::create_dir_all(&dir).unwrap();
         let script = dir.join("fake-agy-auth.sh");
         let mut file = std::fs::File::create(&script).unwrap();
@@ -493,10 +497,7 @@ mod tests {
         use std::io::Write;
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = std::env::temp_dir().join(format!(
-            "consilium-antigravity-line-limit-{}",
-            std::process::id()
-        ));
+        let dir = test_dir("line-limit");
         std::fs::create_dir_all(&dir).unwrap();
         let script = dir.join("fake-agy-large-line.sh");
         let mut file = std::fs::File::create(&script).unwrap();
