@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Regenerate packaging/flatpak/cargo-sources.json from Cargo.lock, with no network access.
 
-Output matches Flathub's flatpak-builder-tools Cargo generator for registry crates. Run this and
-packaging/generate-third-party-notices.sh after any Cargo.lock change; CI checks both.
+Output matches Flathub's flatpak-builder-tools Cargo generator for registry crates. After any
+Cargo.lock change, run `python3 packaging/generate-flatpak-sources.py` and
+`packaging/generate-third-party-notices.sh`; CI fails until both files are current.
 """
 import json
 import tomllib
