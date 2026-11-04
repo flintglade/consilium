@@ -161,17 +161,6 @@
     },
     {
       "package": "winnow",
-      "version": "0.7.15",
-      "license": "MIT",
-      "materials": [{
-        "type": "vendored",
-        "path": "packaging/attribution-supplements/winnow-COPYRIGHT",
-        "sha256": "472ecdadaee65c564f323a4fcb3f1ef21a23bd51dddb6d8d336f32122a680cd1",
-        "source": "https://raw.githubusercontent.com/winnow-rs/winnow/eae4d4a23c400fec27a01cfb7115bc7808374f40/COPYRIGHT"
-      }]
-    },
-    {
-      "package": "winnow",
       "version": "1.0.3",
       "license": "MIT",
       "materials": [{

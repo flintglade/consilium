@@ -3,14 +3,14 @@
   "entries": [
     {
       "package": "alloc-stdlib",
-      "version": "0.2.4",
+      "version": "0.3.0",
       "license": "BSD-3-Clause",
       "materials": [
         {
           "type": "vendored",
           "path": "packaging/license-fallbacks/alloc-stdlib-0.2.4-LICENSE",
           "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae",
-          "source": "https://raw.githubusercontent.com/dropbox/rust-alloc-no-stdlib/ae42d22078b98549e987d2f03d12df7b984fde47/LICENSE"
+          "source": "https://raw.githubusercontent.com/dropbox/rust-alloc-no-stdlib/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE"
         }
       ]
     },
@@ -42,7 +42,7 @@
     },
     {
       "package": "selectors",
-      "version": "0.36.1",
+      "version": "0.38.0",
       "license": "MPL-2.0",
       "materials": [
         {
@@ -56,118 +56,23 @@
         {
           "type": "locked-package",
           "package": "selectors",
-          "version": "0.36.1",
+          "version": "0.38.0",
           "path": "lib.rs",
           "sha256": "d54c6e13e9e952dac17d209171df8657e3cae93beaddace4906150cdec8d02e9",
-          "source": "Cargo.lock package selectors 0.36.1 MPL source notice"
-        }
-      ]
-    },
-    {
-      "package": "unic-char-property",
-      "version": "0.9.0",
-      "license": "MIT/Apache-2.0",
-      "materials": [
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-a60eea-LICENSE-APACHE",
-          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-APACHE"
-        },
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-23f18e-LICENSE-MIT",
-          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-MIT"
-        }
-      ]
-    },
-    {
-      "package": "unic-char-range",
-      "version": "0.9.0",
-      "license": "MIT/Apache-2.0",
-      "materials": [
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-a60eea-LICENSE-APACHE",
-          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-APACHE"
-        },
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-23f18e-LICENSE-MIT",
-          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-MIT"
-        }
-      ]
-    },
-    {
-      "package": "unic-common",
-      "version": "0.9.0",
-      "license": "MIT/Apache-2.0",
-      "materials": [
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-a60eea-LICENSE-APACHE",
-          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-APACHE"
-        },
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-23f18e-LICENSE-MIT",
-          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-MIT"
-        }
-      ]
-    },
-    {
-      "package": "unic-ucd-ident",
-      "version": "0.9.0",
-      "license": "MIT/Apache-2.0",
-      "materials": [
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-a60eea-LICENSE-APACHE",
-          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/8a6ce83063d90b91ae2ce59eddb803edd393fca9/LICENSE-APACHE"
-        },
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-23f18e-LICENSE-MIT",
-          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/8a6ce83063d90b91ae2ce59eddb803edd393fca9/LICENSE-MIT"
-        }
-      ]
-    },
-    {
-      "package": "unic-ucd-version",
-      "version": "0.9.0",
-      "license": "MIT/Apache-2.0",
-      "materials": [
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-a60eea-LICENSE-APACHE",
-          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-APACHE"
-        },
-        {
-          "type": "vendored",
-          "path": "packaging/license-fallbacks/rust-unic-23f18e-LICENSE-MIT",
-          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
-          "source": "https://raw.githubusercontent.com/open-i18n/rust-unic/5878605364af97a3358368a6eaef02104af2e016/LICENSE-MIT"
+          "source": "Cargo.lock package selectors 0.38.0 MPL source notice"
         }
       ]
     },
     {
       "package": "webview2-com",
-      "version": "0.38.2",
+      "version": "0.39.1",
       "license": "MIT",
       "materials": [
         {
           "type": "vendored",
           "path": "packaging/license-fallbacks/webview2-rs-0dcf415-LICENSE",
           "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
-          "source": "https://raw.githubusercontent.com/wravery/webview2-rs/b74dc5e2b394044bea5191052868ce7a106c202c/LICENSE"
+          "source": "https://raw.githubusercontent.com/wravery/webview2-rs/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE"
         }
       ]
     },
@@ -186,14 +91,14 @@
     },
     {
       "package": "webview2-com-sys",
-      "version": "0.38.2",
+      "version": "0.39.1",
       "license": "MIT",
       "materials": [
         {
           "type": "vendored",
           "path": "packaging/license-fallbacks/webview2-rs-0dcf415-LICENSE",
           "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
-          "source": "https://raw.githubusercontent.com/wravery/webview2-rs/b74dc5e2b394044bea5191052868ce7a106c202c/LICENSE"
+          "source": "https://raw.githubusercontent.com/wravery/webview2-rs/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE"
         }
       ]
     }
