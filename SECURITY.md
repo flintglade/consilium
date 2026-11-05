@@ -1,6 +1,6 @@
 # Security
 
-Report vulnerabilities privately through [GitHub private vulnerability reporting](https://github.com/flintglade/consilium/security/advisories/new) or support@flintglade.com. Include the affected version, steps to reproduce, and a synthetic example; omit credentials and private conversations.
+Report vulnerabilities privately through [GitHub private vulnerability reporting](https://github.com/draconitic-labs/consilium/security/advisories/new) or support@draconitic.com. Include the affected version, steps to reproduce, and a synthetic example; omit credentials and private conversations.
 
 Use the latest tested revision. The desktop renderer treats model output as untrusted text, provider HTTP clients refuse redirects, and Chat and Agent routes have separate capability checks. Agent tools run with the chosen vendor CLI permissions and can modify local files; inspect the selected provider and mode before sending a request.
 

@@ -1572,7 +1572,7 @@ fn app_info(state: State<AppState>) -> AppInfo {
         version: env!("CARGO_PKG_VERSION"),
         publisher: "Flintglade",
         license: "Apache-2.0",
-        repository: "https://github.com/flintglade/consilium",
+        repository: "https://github.com/draconitic-labs/consilium",
         config_path: grok_chat_core::user_config_env_path()
             .map(|path| path.display().to_string())
             .unwrap_or_else(|| "No per-user configuration path is available".to_string()),

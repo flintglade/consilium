@@ -18,8 +18,8 @@
     <binary>grok-chat-desktop</binary>
   </provides>
   <url type="homepage">https://flintglade.com/</url>
-  <url type="vcs-browser">https://github.com/flintglade/consilium</url>
-  <url type="bugtracker">https://github.com/flintglade/consilium/issues</url>
+  <url type="vcs-browser">https://github.com/draconitic-labs/consilium</url>
+  <url type="bugtracker">https://github.com/draconitic-labs/consilium/issues</url>
   <url type="donation">https://www.patreon.com/c/zach457</url>
   <content_rating type="oars-1.1" />
   <branding>

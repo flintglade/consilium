@@ -6,7 +6,7 @@ break desktop identity and require a new Flathub submission.
 
 Consilium itself is free and open source under Apache-2.0. Release packages
 link to [Flintglade](https://flintglade.com/), source and issues live in the
-[canonical repository](https://github.com/flintglade/consilium), and optional
+[canonical repository](https://github.com/draconitic-labs/consilium), and optional
 project support is available through
 [Patreon](https://www.patreon.com/c/zach457). Third-party providers may charge
 for their own services, but payment never unlocks a Consilium feature.
@@ -123,7 +123,7 @@ remain directly downloadable from a public GitHub release; it must not be
 wrapped in a ZIP or require authentication. Once a stable release passes the
 artifact check and runs on the catalog's supported compatibility baseline, the
 owner can add a one-line data file linking to
-`https://github.com/flintglade/consilium` and open a pull request to the
+`https://github.com/draconitic-labs/consilium` and open a pull request to the
 AppImageHub catalog repository.
 
 The published release asset is named
@@ -165,7 +165,7 @@ The local manifest is deliberately **not** a Flathub submission manifest.
 Before any submission, a human owner must complete every gate below:
 
 1. Establish the owner-confirmed canonical source repository at
-   `https://github.com/flintglade/consilium`, create a stable tag, and make the
+   `https://github.com/draconitic-labs/consilium`, create a stable tag, and make the
    repository and tag reachable without authentication.
 2. Replace the local `dir` source with that immutable tag archive plus its
    verified SHA-256 hash. Regenerate `cargo-sources.json` from the tagged

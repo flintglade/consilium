@@ -1,15 +1,15 @@
 # Consilium
 
 <p align="center">
-  <img src="desktop/icons/consilium.svg" width="192" alt="Flintglade Consilium dragon mark">
+  <img src="desktop/icons/consilium.svg" width="192" alt="Consilium dragon mark">
 </p>
 
 Consilium is a free and open-source multi-provider AI harness. Its desktop app
 routes among local models, provider CLIs, and direct APIs; a focused terminal
 interface supports Grok CLI and the optional xAI API through the shared Rust
 streaming backend. It is a
-[Flintglade](https://flintglade.com/) project, developed in public at
-[github.com/flintglade/consilium](https://github.com/flintglade/consilium).
+[Draconitic Labs](https://draconitic.com/) project, developed in public at
+[github.com/draconitic-labs/consilium](https://github.com/draconitic-labs/consilium).
 
 Every Consilium feature is available in this repository under the
 [Apache License 2.0](LICENSE). There are no paid Consilium tiers, feature
