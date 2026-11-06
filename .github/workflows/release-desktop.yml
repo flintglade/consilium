@@ -64,7 +64,7 @@ jobs:
           persist-credentials: false
           ref: ${{ env.SOURCE_REF }}
       - uses: dtolnay/rust-toolchain@a75363d06101555fc97c6c7e1e65670b99104d98 # 1.96.1
-      - uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
+      - uses: Swatinem/rust-cache@c8037a86dde8214a8310e9f54a8fc61ab362aa31 # v2
       - name: Install Linux bundle dependencies
         if: runner.os == 'Linux'
         run: |
